@@ -41,6 +41,9 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 # Project Setup
 #-------------------
 enable_language(C ASM)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS ON)
 # Project name
 project(main)
 # The project version number.
@@ -58,17 +61,22 @@ list(APPEND MODULES_USED
 #-------------------
 # MCU Setup
 #-------------------
-set(MCU STM32F429xx)
-set(MCU_DIR include/STM32F4xx/)
-set(MCU_SPEC  cortex-m4)
-set(FLOAT_SPEC "-mfloat-abi=hard -mfpu=fpv4-sp-d16")
+#set(MCU STM32F429xx)
+#set(MCU_DIR include/STM32F4xx/)
+#set(MCU_SPEC  cortex-m4)
+#set(FLOAT_SPEC "-mfloat-abi=hard -mfpu=fpv4-sp-d16")
+set(MCU STM32L152xB)
+set(MCU_DIR include/STM32L1xx/)
+set(MCU_SPEC cortex-m3)
+set(FLOAT_SPEC "-DCORTEX_USE_FPU=FALSE")
 
 # Dont need to change this if MCU is defined correctly
 # then directly set the STARTUP_FILE and SYSTEM_FILE to the required files
 string(TOLOWER startup_${MCU}.s STARTUP_FILE_NAME)
 
 set(STARTUP_FILE ${MCU_DIR}/Source/Templates/gcc/${STARTUP_FILE_NAME})
-set(SYSTEM_FILE  ${MCU_DIR}/Source/Templates/system_stm32f4xx.c)
+#set(SYSTEM_FILE  ${MCU_DIR}/Source/Templates/system_stm32f4xx.c)
+set(SYSTEM_FILE  ${MCU_DIR}/Source/Templates/system_stm32l1xx.c)
 
 # Set the Highspeed external clock value (HSE) in MHz
 set(HSE_VAL 8000000)
@@ -83,7 +91,7 @@ set(LINKER_SCRIPT linker.ld)
 # If enabled then set the correct path of the HAL Driver folder
 #set(USE_HAL = 1
 #ifeq (1,$(USE_HAL))
-set(HAL_DIR components/STM32F4xx_HAL_Driver)
+set(HAL_DIR components/STM32L1xx_HAL_Driver)
 #endif
 
 #-------------------
@@ -91,8 +99,8 @@ set(HAL_DIR components/STM32F4xx_HAL_Driver)
 #-------------------
 # Path to FreeRTOS Kernel
 set(RTOS_DIR components/FreeRTOS-Kernel)
-# Modify this to the path where your micrcontroller specific port is
-set(RTOS_DIR_MCU ${RTOS_DIR}/portable/GCC/ARM_CM4F) # For cortex-m4 microcontroller
+# Modify this to the path where your microcontroller specific port is
+set(RTOS_DIR_MCU ${RTOS_DIR}/portable/GCC/ARM_CM3) # For cortex-m3 microcontroller
 set(RTOS_HEAP    ${RTOS_DIR}/portable/MemMang/heap_4.c) # Select which heap implementation to use
 
 #-------------------
