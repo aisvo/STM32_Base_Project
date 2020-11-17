@@ -82,7 +82,7 @@ set(SYSTEM_FILE  ${MCU_DIR}/Source/Templates/system_stm32l1xx.c)
 set(HSE_VAL 8000000)
 
 # Define the linker script location
-set(LINKER_SCRIPT linker.ld)
+set(LINKER_SCRIPT components/STM32L152RBTx_FLASH.ld)
 
 #-------------------
 # HAL Setup
@@ -320,7 +320,7 @@ if(TARGET_GROUP STREQUAL production)
         ${MAIN_SRC}
         ${STARTUP_FILE}
         ${SYSTEM_FILE}
-        )
+            )
     add_executable(${PROJECT_NAME}.elf
         ${SOURCES}
         )
@@ -340,6 +340,17 @@ if(TARGET_GROUP STREQUAL production)
         HSE_VALUE=${HSE_VAL}
         SEMIHOSTING=${SEMIHOSTING}
         )
+    # Print executable size
+    add_custom_command(TARGET ${PROJECT_NAME}.elf
+            POST_BUILD
+            COMMAND arm-none-eabi-size ${PROJECT_NAME}.elf
+            )
+    # Create hex file
+    add_custom_command(TARGET ${PROJECT_NAME}.elf
+            POST_BUILD
+            COMMAND arm-none-eabi-objcopy -O ihex ${PROJECT_NAME}.elf ${PROJECT_NAME}.hex
+            COMMAND arm-none-eabi-objcopy -O binary ${PROJECT_NAME}.elf ${PROJECT_NAME}.bin
+            )
 
     ######################################################################
     # @Target: flash
